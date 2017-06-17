@@ -15,7 +15,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         super()
         config = Object.assign({
             mode: LISAVoiceCommand.MODE_EXTERNAL,
-            url: 'http://mylisabox:3000/api/v1',
+            url: 'http://mylisabox:3000',
             login: null,
             password: null,
             gSpeech: './speech/LISA-gfile.json',
