@@ -49,5 +49,5 @@ Here is all the possible configuration you can use :
              
  `language` : language use for translations, default to `en-UK`
  
- `hotwords`: sonus hotwords configuration, see sonus documentation for more, default to `[{file: './speech/hey_lisa.pmdl', hotword: 'hey lisa'}]`
+ `hotwords`: sonus hotwords configuration, see sonus documentation for more, default to `[{file: './node_modules/lisa-standalone-voice-command/speech/hey_lisa.pmdl', hotword: 'hey lisa'}]`
 

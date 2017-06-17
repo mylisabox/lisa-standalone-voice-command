@@ -25,7 +25,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
             },
             autoStart: true,
             language: 'en-UK',
-            hotwords: [{file: './speech/hey_lisa.pmdl', hotword: 'hey lisa'}]
+            hotwords: [{file: './node_modules/lisa-standalone-voice-command/speech/hey_lisa.pmdl', hotword: 'hey lisa'}]
         }, config)
 
         const speech = require('@google-cloud/speech')({
