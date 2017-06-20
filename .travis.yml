@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+- 6
+- 7
+notifications:
+  email: false
+  webhooks:
+    urls:
+    - https://webhooks.gitter.im/e/117063f9c1031b17e557
+    on_start: never
+    on_failure: change
+deploy:
+  provider: npm
+  email: hello@mylisabox.com
+  api_key:
+    secure: gK/986CTdOHbtN31Nzcw56HbS0GaKwNgbq5o9NFw+MujI3tV3ZVQPiaEkbgEir8FzeARJjZDU2m5J0QJJK8WTbsG0beg+ym+QGx1uXtPDV5VeastAoWkU+g/U6ZI+JhAxwB8tyrMo/ebkY1E9+o+4p2UeG2+/PTDAS6PVB+nKeekhAKMHVTGe+smUYnEjhkmmywzzBCMXmqFHgei5U3Odb3V2wab9ScwnFYzv6TsVSWpi2KcOqG3EicXhOWtuCaZ1/ZH5HgZSbr8ZZeVhts8Wcajhufsmy1EisDQI7HeSAwRxxpZEgkA8Q4pZ9lg//1SUW40NFEMncQw3/YeA+wmrxa1u2MCBfyIPt12c025Paku6Yqks8NAwvR+kn64bQk6r5oRxV5T/HKUpMOmDxkjYf85wPF9832LrDpk0OvxkZgdNNIM03dN3WxxlwysYyzi+ogrsA0YLxni1g1mC+PhHzGT9Aoob/+CdgCQSc5o2ZsV7ULNUJoggGIXrTPmeFvElKsRs+wW1armT9cp5soVsTl37ezwkBboyOxXLz10iNCjco77fbQ6i6LXAy+telHkf7h2R83JExJ/edbJm45JcoWu/oJLRdsq4VVdCxPdnp4hiTsocgu2vXGBZcSk9GusXDh8CR2ksaZ2PMH2ZCy+NeYmO8W5BboDsPuUrg82BU4=
+  on:
+    tags: true
+    repo: mylisabox/lisa-standalone-voice-command
+    node: 7

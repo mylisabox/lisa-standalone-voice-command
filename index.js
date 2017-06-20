@@ -51,6 +51,8 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.sonus.on('error', error => this.emit('error', error))
         this.sonus.on('partial-result', sentence => this.emit('partial-result', sentence))
         this.sonus.on('final-result', this._onFinalResult.bind(this))
+
+        this.sonus.emit('final-result', 'test')
     }
 
     start() {
@@ -76,7 +78,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     _onFinalResult(sentence) {
         this.emit('final-result', sentence)
         if (this.mode === LISAVoiceCommand.MODE_EXTERNAL) {
-            this.lisa.sendVoice(sentence).catch(error => this.emit('error', error))
+            this.lisa.sendVoice(sentence).catch(error => {
+                this.emit('error', error)
+            })
         }
     }
 }
