@@ -78,9 +78,13 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     _onFinalResult(sentence) {
         this.emit('final-result', sentence)
         if (this.mode === LISAVoiceCommand.MODE_EXTERNAL) {
-            this.lisa.sendVoice(sentence).catch(error => {
-                this.emit('error', error)
-            })
+            this.lisa.sendVoice(sentence)
+                .then(result => {
+                    this.emit('bot-result', result)
+                })
+                .catch(error => {
+                    this.emit('error', error)
+                })
         }
     }
 }

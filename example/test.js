@@ -12,3 +12,4 @@ const lisa = new LISA({
 lisa.on('hotword', () => console.log('hotword detected'))
 lisa.on('error', error => console.log(error))
 lisa.on('final-result', sentence => console.log(sentence + ' detected'))
+lisa.on('bot-result', result => console.log(result + ' detected'))
