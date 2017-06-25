@@ -6,7 +6,7 @@ const assert = require('assert')
 describe('LISA', () => {
     let lisa
     before(() => {
-        lisa = new LISA('jimmy.aumard@gmail.com', 'adminadmin', 'http://localhost:3000/api/v1')
+        lisa = new LISA('jimmy.aumard@gmail.com', 'adminadmin', 'http://localhost:3000')
     })
 
     it('should send the sentence without specific login call', () => {
