@@ -32,6 +32,8 @@ Here is all the possible configuration you can use :
  
  `mode` : LISA.MODE_EXTERNAL or LISA.MODE_INTERNAL, internal will not send the sentence to L.I.S.A., default to `LISA.EXTERNAL`
  
+ `matrix`: IP to the matrix board default, to false, compatibility with Matrix Creator board leds, rainbow idle mode, green when listening, red errors, yellow unknown command and blue when pause
+ 
  `url` : url of the L.I.S.A. server instance, default to `http://mylisabox.com`
  
  `login` : user email of L.I.S.A. account
