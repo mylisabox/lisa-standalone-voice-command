@@ -2,7 +2,7 @@ const LISA = require('../index')
 
 const lisa = new LISA({
     mode: LISA.MODE_EXTERNAL,
-    matrix: '192.168.1.20',
+    matrix: 'IP_TO_MATRIX_CREATOR_BOARD',//or false to disable the support (false by default)
     url: 'http://localhost:3000',
     login: 'jimmy.aumard@gmail.com',
     password: 'adminadmin',
