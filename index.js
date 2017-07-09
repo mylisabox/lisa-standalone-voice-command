@@ -26,7 +26,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
                 sampleRateHertz: 16000
             },
             autoStart: true,
-            language: 'fr-FR',
+            language: 'en-UK',
             hotwords: [{
                 file: './node_modules/lisa-standalone-voice-command/speech/hey_lisa.pmdl',
                 hotword: 'hey lisa'
@@ -41,6 +41,13 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.isListening = false
         this.matrix = config.matrix
         if (this.matrix) {
+            this.matrixStateMode = config.matrix.stateMode || {
+                    mode: MatrixLed.MODE.GRADIENT,
+                    listening: { g: 150 },
+                    error: { r: 150 },
+                    pause: { b: 150 },
+                    unknown: { g: 150, b: 150 }
+                }
             this.matrix = new MatrixLed(config.matrix)
         }
 
@@ -60,7 +67,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.sonus.on('hotword', (index, keyword) => {
             this.emit('hotword', index, keyword)
             this.isListening = true
-            this._setMatrixColor({ g: 50 })
+            this._setMatrixColor(this.matrixStateMode.listening)
         })
         this.sonus.on('error', error => {
             this.isListening = false
@@ -68,6 +75,21 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         })
         this.sonus.on('partial-result', sentence => this.emit('partial-result', sentence))
         this.sonus.on('final-result', this._onFinalResult.bind(this))
+        this.on('bot-result', () => {
+            this.trigger(1)
+        })
+
+        function exitHandler(exit) {
+            this.stop()
+            if (exit) process.exit()
+        }
+
+        //do something when app is closing
+        process.on('exit', exitHandler.bind(this));
+
+        //catches ctrl+c event
+        process.on('SIGINT', exitHandler.bind(this, true));
+
     }
 
     start() {
@@ -87,7 +109,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     pause() {
         Sonus.pause(this.sonus)
-        this._setMatrixColor.setColor({ b: 50 })
+        this._setMatrixColor.setColor(this.matrixStateMode.pause)
     }
 
     resume() {
@@ -104,11 +126,11 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     _onFinalResult(sentence) {
         this.isListening = false
         this.emit('final-result', sentence)
-        if (this.mode === LISAVoiceCommand.MODE_EXTERNAL) {
+        if (this.mode === LISAVoiceCommand.MODE_EXTERNAL && sentence !== '') {
             this.lisa.sendVoice(sentence)
                 .then(result => {
                     if (result.action === 'UNKNOWN') {
-                        this._setMatrixColor({ g: 150, r: 150 }, true)
+                        this._setMatrixColor(this.matrixStateMode.unknown, true)
                     }
                     else {
                         if (this.matrix) {
@@ -130,13 +152,13 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     _emitError(error) {
         this.emit('error', error)
-        this._setMatrixColor({ r: 50 }, true)
+        this._setMatrixColor(this.matrixStateMode.error, true)
     }
 
-    _setMatrixColor(rgb, needToBereseted = false) {
+    _setMatrixColor(rgb, needToBeRestored = false) {
         if (this.matrix) {
-            this.matrix.setColor(rgb)
-            if (needToBereseted) {
+            this.matrix.setColor(this.matrixStateMode.mode, rgb)
+            if (needToBeRestored) {
                 this._restoreIdleModeAfterTime()
             }
         }

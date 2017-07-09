@@ -32,7 +32,7 @@ Here is all the possible configuration you can use :
  
  `mode` : LISA.MODE_EXTERNAL or LISA.MODE_INTERNAL, internal will not send the sentence to L.I.S.A., default to `LISA.EXTERNAL`
  
- `matrix`: IP to the matrix board default, to false, compatibility with Matrix Creator board leds, rainbow idle mode, green when listening, red errors, yellow unknown command and blue when pause
+ `matrix`: IP to the matrix board, default to false, compatibility with Matrix Creator board leds, rainbow idle mode, green when listening, red errors, yellow unknown command and blue when pause
  
  `url` : url of the L.I.S.A. server instance, default to `http://mylisabox.com`
  
@@ -53,3 +53,23 @@ Here is all the possible configuration you can use :
  
  `hotwords`: sonus hotwords configuration, see sonus documentation for more, default to `[{file: './node_modules/lisa-standalone-voice-command/speech/hey_lisa.pmdl', hotword: 'hey lisa'}]`
 
+# Matrix LEDs customization
+
+You can pass a more complex configuration to change the LEDs color depending of the state.
+
+Here is the possible configuration :
+```
+{
+  ip: 'IP_TO_MATRIX_CREATOR_BOARD',
+  idleMode: {
+     leds: [] // array length 35 with each rgb LEDs states, default to rainbow color
+  },
+  stateMode: {
+     mode: LISA.MODE.GRADIENT, // mode can be static, gradient or pulse
+     listening: { g: 150 }, // color for listening mode, default to green
+     error: { r: 150 }, // color for error mode, default to red
+     pause: { b: 150 }, // color for pause mode, default to blue
+     unknown: { g: 150, b: 150 } // color for unknown mode, default to yellow
+  }
+}
+```
