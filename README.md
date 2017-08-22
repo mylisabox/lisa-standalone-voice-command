@@ -40,6 +40,8 @@ Here is all the possible configuration you can use :
  
  `password` : user password of L.I.S.A. account
  
+ `speaker` : speaker object to answer the user after L.I.S.A. responses
+ 
  `gSpeech` : google speech configuration file, default to `./speech/LISA-gfile.json` but need to be provided
  
  `options` : sonus options, see sonus doc for all possibilities default to : `{
@@ -52,6 +54,23 @@ Here is all the possible configuration you can use :
  `language` : language use for translations, default to `en-UK`
  
  `hotwords`: sonus hotwords configuration, see sonus documentation for more, default to `[{file: './node_modules/lisa-standalone-voice-command/speech/hey_lisa.pmdl', hotword: 'hey lisa'}]`
+
+# Speaker capabilities
+The default speaker use PICO TTS, so it need to be installed on your system in order to work.
+
+If you want to create a custom speaker all you need to do is to provide an object with those methods: 
+```js 
+{
+    //Initialize the speaker
+    init: (config) => {return Promise.result()}, //For now config only have the 'language' field
+    //Speak the given text
+    speak: (text) => {return Promise.result()},
+    //Repeat last sentence
+    repeat: () => {return Promise.result()},
+    //If text currently playing it stop directly
+    shutUp: () => {return Promise.result()}
+}
+```
 
 # Matrix LEDs customization
 

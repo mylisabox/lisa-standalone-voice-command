@@ -7,6 +7,7 @@ const lisa = new LISA({
     },//or false to disable the support (false by default)
     url: 'http://localhost:3000',
     login: 'jimmy.aumard@gmail.com',
+    speaker: require('../lib/speaker'),
     password: 'adminadmin',
     language: 'fr-FR',
     gSpeech: './speech/LISA-gfile.json',

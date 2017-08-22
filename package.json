@@ -10,7 +10,8 @@
   "author": "jimmy.aumard@gmail.com",
   "license": "GPL-3.0",
   "dependencies": {
-    "matrix-protos": "^0.0.11",
+    "matrix-protos": "^0.0.13",
+    "pico-speaker": "^0.0.7",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
     "sonus": "^0.1.8",
