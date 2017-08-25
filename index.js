@@ -39,6 +39,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     this.mode = config.mode
     this.speaker = config.speaker
+    this.speaker.init({
+      language: config.language
+    })
     const speech = require('@google-cloud/speech')({
       keyFilename: config.gSpeech
     })
@@ -88,7 +91,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.sonus.on('final-result', this._onFinalResult.bind(this))
 
     this.on('bot-result', result => {
-      if (this.speaker) {
+      if (this.speaker && result.responses[0]) {
         this.speaker.speak(result.responses[0])
           .then(() => this.trigger(1))
           .catch(error => {
