@@ -93,7 +93,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.on('bot-result', result => {
       if (this.speaker && result.responses[0]) {
         this.speaker.speak(result.responses[0])
-          .then(() => this.trigger(1))
+          .then(() => setTimeout(() => this.trigger(1), 1000))
           .catch(error => {
             this._emitError(error)
           })
