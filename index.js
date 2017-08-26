@@ -48,6 +48,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     this.isListening = false
     this.matrix = config.matrix
+    this.matrixStateMode = {}
     if (this.matrix) {
       this.matrixStateMode = config.matrix.stateMode || {
         mode: MatrixLed.MODE.GRADIENT,
