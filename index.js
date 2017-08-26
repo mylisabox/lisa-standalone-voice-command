@@ -92,12 +92,8 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.sonus.on('final-result', this._onFinalResult.bind(this))
 
     this.on('bot-result', result => {
-      if (this.speaker && result.responses[0]) {
-        this.speaker.speak(result.responses[0])
-          .then(() => setTimeout(() => this.trigger(1), 1000))
-          .catch(error => {
-            this._emitError(error)
-          })
+      if (result.responses[0]) {
+        this.speak(result.responses[0])
       }
       else {
         this.trigger(1)
@@ -154,6 +150,19 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
   trigger(index, hotword) {
     Sonus.trigger(this.sonus, index, hotword)
+  }
+
+  speak(text, disabledCache = false) {
+    if (!this.speaker || !text) {
+      this.trigger(1)
+      return Promise.resolve()
+    }
+    else
+      return this.speaker.speak(text, disabledCache)
+        .then(() => setTimeout(() => this.trigger(1), 1000))
+        .catch(error => {
+          this._emitError(error)
+        })
   }
 
   _onFinalResult(sentence) {
