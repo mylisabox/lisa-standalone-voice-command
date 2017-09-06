@@ -1,33 +1,25 @@
 'use strict'
 
 const Sonus = require('sonus')
+const mdns = require('mdns')
 const LISAWebservice = require('./lib/lisa-webservice')
 const MatrixLed = require('./lib/matrix-led')
 const speaker = require('./lib/speaker')
 const EventEmitter = require('events')
+const uuid = require('uuid')
+const fs = require('fs')
 
 module.exports = class LISAVoiceCommand extends EventEmitter {
-  static get MODE_EXTERNAL() {
-    return 1;
-  }
-
-  static get MODE_INTERNAL() {
-    return 0;
-  }
-
   constructor(config = {}) {
     super()
     config = Object.assign({
-      mode: LISAVoiceCommand.MODE_EXTERNAL,
       matrix: false,
       url: 'http://mylisabox:3000',
-      login: null,
-      password: null,
       speaker: speaker,
       gSpeech: './speech/LISA-gfile.json',
       options: {
         encoding: 'LINEAR16',
-        sampleRateHertz: 16000
+        sampleRateHertz: 44000
       },
       autoStart: true,
       language: 'en-US',
@@ -37,7 +29,15 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       }]
     }, config)
 
-    this.mode = config.mode
+    const file = './identifier'
+    if (fs.existsSync(file)) {
+      this.identifier = fs.readFileSync(file)
+    }
+    else {
+      this.identifier = uuid()
+      fs.writeFileSync(file, this.identifier);
+    }
+
     this.speaker = config.speaker
     this.speaker.init({
       language: config.language
@@ -49,16 +49,6 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.isListening = false
     this.matrix = config.matrix
     this.matrixStateMode = {}
-    if (this.matrix) {
-      this.matrixStateMode = config.matrix.stateMode || {
-        mode: MatrixLed.MODE.GRADIENT,
-        listening: { g: 150 },
-        error: { r: 150 },
-        pause: { b: 150 },
-        unknown: { g: 150, r: 150 }
-      }
-      this.matrix = new MatrixLed(config.matrix)
-    }
 
     const hotwords = config.hotwords
     const language = config.language
@@ -67,21 +57,42 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       hotwords, language
     }, config.options)
 
-    this.lisa = new LISAWebservice(config.login, config.password, config.url)
-
     this.sonus = Sonus.init(sonusOptions, speech)
+    this.lisa = new LISAWebservice(this.identifier, config.url)
+
+    this.init()
+
+    const name = 'lisaVoiceCommand'
+    const txt_record = {
+      name: name,
+      identifier: this.identifier
+    };
+
+    this.mdnsService = mdns.createAdvertisement(mdns.tcp('http'), 9876, {
+      name: name,
+      txtRecord: txt_record
+    })
+    this.mdnsService.start()
     if (config.autoStart) {
       this.start()
     }
+  }
+
+  init() {
+    if (this.matrix) {
+      this.matrixStateMode = this.matrix.stateMode || {
+        mode: MatrixLed.MODE.GRADIENT,
+        listening: { g: 150 },
+        error: { r: 150 },
+        pause: { b: 150 },
+        unknown: { g: 150, r: 150 }
+      }
+      this.matrix = new MatrixLed(this.matrix)
+    }
+
     this.sonus.on('hotword', (index, keyword) => {
       this.isListening = true
       this.setMatrixColor(this.matrixStateMode.listening)
-      if (this.listeningTimeout) {
-        clearTimeout(this.listeningTimeout)
-      }
-      this.listeningTimeout = setTimeout(() => {
-        this.stopListening()
-      }, 10000)
       this.emit('hotword', index, keyword)
     })
     this.sonus.on('error', error => {
@@ -92,12 +103,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.sonus.on('final-result', this._onFinalResult.bind(this))
 
     this.on('bot-result', result => {
-      if (result.responses[0]) {
-        this.speak(result.responses[0])
-      }
-      else {
-        this.trigger(1)
-      }
+      this.speak(result.response, false, result.action !== 'THANKS' &&
+        !(result.action === 'UNKNOWN' && this.lastAction === 'UNKNOWN'))
+      this.lastAction = result.action
     })
 
     function exitHandler(exit) {
@@ -128,14 +136,6 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     }
   }
 
-  stopListening() {
-    Sonus.pause(this.sonus)
-    Sonus.resume(this.sonus)
-    if (this.matrix) {
-      this.matrix.idle()
-    }
-  }
-
   pause() {
     Sonus.pause(this.sonus)
     this.setMatrixColor.setColor(this.matrixStateMode.pause)
@@ -152,14 +152,20 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     Sonus.trigger(this.sonus, index, hotword)
   }
 
-  speak(text, disabledCache = false) {
+  speak(text, disabledCache = false, continueSpeech = true) {
     if (!this.speaker || !text) {
-      this.trigger(1)
+      if (continueSpeech) {
+        setTimeout(() => this.trigger(1), 500)
+      }
       return Promise.resolve()
     }
     else
       return this.speaker.speak(text, disabledCache)
-        .then(() => setTimeout(() => this.trigger(1), 1000))
+        .then(() => {
+          if (continueSpeech) {
+            setTimeout(() => this.trigger(1), 1000)
+          }
+        })
         .catch(error => {
           this._emitError(error)
         })
@@ -167,11 +173,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
   _onFinalResult(sentence) {
     this.isListening = false
-    if (this.listeningTimeout) {
-      clearTimeout(this.listeningTimeout)
-    }
+
     this.emit('final-result', sentence)
-    if (this.mode === LISAVoiceCommand.MODE_EXTERNAL && sentence !== '') {
+    if (sentence !== '') {
       this.lisa.sendVoice(sentence)
         .then(result => {
           if (result.action === 'UNKNOWN') {

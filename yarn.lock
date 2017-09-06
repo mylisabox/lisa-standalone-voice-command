@@ -840,6 +840,13 @@ matrix-protos@^0.0.13:
   dependencies:
     protobufjs "^6.8.0"
 
+mdns@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/mdns/-/mdns-2.3.3.tgz#bbc6ad5407a230133d62e0da692f29f0bd49728e"
+  dependencies:
+    bindings "~1.2.1"
+    nan "~2.3.0"
+
 methmeth@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/methmeth/-/methmeth-1.1.0.tgz#e80a26618e52f5c4222861bb748510bd10e29089"
@@ -1383,6 +1390,10 @@ util-deprecate@~1.0.1:
 uuid@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
+
+uuid@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 
 verror@1.3.6:
   version "1.3.6"

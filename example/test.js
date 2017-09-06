@@ -1,14 +1,9 @@
 const LISA = require('../index')
 
 const lisa = new LISA({
-    mode: LISA.MODE_EXTERNAL,
-    matrix: {
-        ip: '192.168.1.26'
-    },//or false to disable the support (false by default)
+  matrix: '192.168.1.26',//or false to disable the support (false by default)
     url: 'http://localhost:3000',
-    login: 'jimmy.aumard@gmail.com',
-    speaker: require('../lib/speaker'),
-    password: 'adminadmin',
+  speaker: require('lisa-speaker-polly'),
     language: 'fr-FR',
     gSpeech: './speech/LISA-gfile.json',
     hotwords: [{ file: './speech/hey_lisa.pmdl', hotword: 'hey lisa' }]

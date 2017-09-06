@@ -11,15 +11,13 @@ Module to listen hotword, translate the user sentence and send the result to a L
 const LISA = require('lisa-standalone-voice-command')
 
 const lisa = new LISA({
-    mode: LISA.MODE_EXTERNAL,
     url: 'http://IP:LISA:BOX:SERVER:3000/api/v1',
-    login: 'LISA_EMAIL',
-    password: 'LISA_PASSWORD',
     gSpeech: './speech/LISA-gfile.json'
 })
 
 lisa.on('hotword', () => console.log('hotword detected'))
 lisa.on('final-result', sentence => console.log(sentence + ' detected'))
+lisa.on('bot-result', result => console.log(result))
 
 setTimeout(function () {
     lisa.stop()
@@ -28,17 +26,13 @@ setTimeout(function () {
 
 # Configuration
 
+In order to enable voice commands, you need to install lisa-plugin-voice to your L.I.S.A. instance and add your devices with the UI, if you don't add them voice commands will not work
+
 Here is all the possible configuration you can use :
- 
- `mode` : LISA.MODE_EXTERNAL or LISA.MODE_INTERNAL, internal will not send the sentence to L.I.S.A., default to `LISA.EXTERNAL`
  
  `matrix`: IP to the matrix board, default to false, compatibility with Matrix Creator board leds, rainbow idle mode, green when listening, red errors, yellow unknown command and blue when pause
  
  `url` : url of the L.I.S.A. server instance, default to `http://mylisabox.com`
- 
- `login` : user email of L.I.S.A. account
- 
- `password` : user password of L.I.S.A. account
  
  `speaker` : speaker object to answer the user after L.I.S.A. responses
  
