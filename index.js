@@ -19,7 +19,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       gSpeech: './speech/LISA-gfile.json',
       options: {
         encoding: 'LINEAR16',
-        sampleRateHertz: 44000
+        sampleRateHertz: 44100
       },
       autoStart: true,
       language: 'en-US',
@@ -39,9 +39,11 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     }
 
     this.speaker = config.speaker
-    this.speaker.init({
-      language: config.language
-    })
+    if (this.speaker) {
+      this.speaker.init({
+        language: config.language
+      })
+    }
     const speech = require('@google-cloud/speech')({
       keyFilename: config.gSpeech
     })
@@ -62,7 +64,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     this.init()
 
-    const name = 'lisaVoiceCommand'
+    const name = 'lisaVoiceCommand ' + this.identifier
     const txt_record = {
       name: name,
       identifier: this.identifier
