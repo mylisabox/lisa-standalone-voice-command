@@ -834,9 +834,9 @@ long@^3.2.0, long@~3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/long/-/long-3.2.0.tgz#d821b7138ca1cb581c172990ef14db200b5c474b"
 
-matrix-protos@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/matrix-protos/-/matrix-protos-0.0.13.tgz#44575f519ef256b5c2f81de48a66ce364b2ec241"
+matrix-protos@^0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/matrix-protos/-/matrix-protos-0.0.16.tgz#a9d0e0769d108ff44cab646c6dffe1868fc04517"
   dependencies:
     protobufjs "^6.8.0"
 
@@ -1387,11 +1387,7 @@ util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
 
-uuid@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
-
-uuid@^3.1.0:
+uuid@^3.0.0, uuid@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 

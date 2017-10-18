@@ -10,7 +10,7 @@
   "author": "jimmy.aumard@gmail.com",
   "license": "GPL-3.0",
   "dependencies": {
-    "matrix-protos": "^0.0.16",
+    "matrix-protos": "^0.0.17",
     "mdns": "^2.3.3",
     "pico-speaker": "^0.0.7",
     "request": "^2.83.0",
