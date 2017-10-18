@@ -3,6 +3,25 @@ node_js:
 - 6
 - 7
 - 8
+addons:
+  # Required to compile native modules on newer Node.js versions
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.9
+    packages:
+    # install toolchains
+    - libmagic-dev
+    - libatlas-base-dev
+    - libavahi-compat-libdnssd-dev
+    - gcc-4.8
+    - g++-4.8
+    - clang-3.8
+    - libzmq3-dbg
+    - libzmq3-dev
+    - libzmq3
+env:
+  - CXX=g++-4.8
 notifications:
   email: false
   webhooks:
