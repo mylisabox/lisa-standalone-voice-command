@@ -13,6 +13,12 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
   constructor(config = {}) {
     super()
     config = Object.assign({
+      log: {
+        debug: console.log,
+        error: console.log,
+        info: console.log,
+        warn: console.log
+      },
       matrix: false,
       url: 'http://mylisabox:3000',
       speaker: speaker,
@@ -44,6 +50,12 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         language: config.language
       })
     }
+
+    if (!fs.existsSync(config.gSpeech)) {
+      config.log.warn(config.gSpeech + ' doesn\'t exist, speech recognition is disabled')
+      return
+    }
+
     const speech = require('@google-cloud/speech')({
       keyFilename: config.gSpeech
     })
