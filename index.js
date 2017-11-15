@@ -115,6 +115,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     })
     this.sonus.on('partial-result', sentence => this.emit('partial-result', sentence))
     this.sonus.on('final-result', this._onFinalResult.bind(this))
+    this.sonus.on('timeout', () => {
+      this._onFinalResult('')
+    })
 
     this.on('bot-result', result => {
       this.speak(result.response, false, result.action !== 'THANKS' &&
