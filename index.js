@@ -192,7 +192,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     if (sentence !== '') {
       this.lisa.sendVoice(sentence)
         .then(result => {
-          if (result.action === 'UNKNOWN') {
+          if (result.action === 'UNKNOWN' && this.matrix) {
             this.setMatrixColor(this.matrixStateMode.unknown, true)
           }
           else {
