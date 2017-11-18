@@ -684,9 +684,9 @@ matrix-protos@^0.0.17:
   dependencies:
     protobufjs "^6.8.0"
 
-mdns@^2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/mdns/-/mdns-2.3.3.tgz#bbc6ad5407a230133d62e0da692f29f0bd49728e"
+mdns@^2.3.4:
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/mdns/-/mdns-2.3.4.tgz#650380ac76089430cf6c8981a945dbd27d02f5b7"
   dependencies:
     bindings "~1.2.1"
     nan "~2.3.0"
@@ -1015,7 +1015,7 @@ signal-exit@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
-snowboy@^1.1.0, snowboy@^1.2.0:
+snowboy@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/snowboy/-/snowboy-1.2.0.tgz#04b69333d15de66b35372c6916a5c4773fbecdf2"
   dependencies:
@@ -1027,17 +1027,9 @@ sntp@1.x.x:
   dependencies:
     hoek "2.x.x"
 
-sonus@0.1.9-1:
-  version "0.1.9-1"
-  resolved "https://registry.yarnpkg.com/sonus/-/sonus-0.1.9-1.tgz#ecb7c21842d8424b7e57c05cf4838c97c2114cff"
-  dependencies:
-    "@google-cloud/speech" "^0.10.3"
-    node-record-lpcm16 "^0.3.0"
-    snowboy "^1.1.0"
-
-"sonus@https://github.com/evancohen/sonus#next":
-  version "0.1.9-0"
-  resolved "https://github.com/evancohen/sonus#6e0e9019719da3fdcefeef9c7a6891600997130d"
+sonus@^0.1.9-4:
+  version "0.1.9-4"
+  resolved "https://registry.yarnpkg.com/sonus/-/sonus-0.1.9-4.tgz#7a9ab7c9b09bec6a0a0f85302e252619043cdf56"
   dependencies:
     "@google-cloud/speech" "^0.10.3"
     node-record-lpcm16 "^0.3.0"
