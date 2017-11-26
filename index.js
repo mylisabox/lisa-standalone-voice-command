@@ -44,11 +44,11 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       fs.writeFileSync(file, this.identifier);
     }
 
-    this.speaker = config.speaker
+    this.speaker = config.speaker.module ? config.speaker.module : config.speaker
     if (this.speaker) {
-      this.speaker.init({
-        language: config.language
-      })
+      const speakerConfig = config.speaker.options || {}
+      speakerConfig.language = config.language
+      this.speaker.init(speakerConfig)
     }
 
     if (!fs.existsSync(config.gSpeech)) {

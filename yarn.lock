@@ -1027,9 +1027,9 @@ sntp@1.x.x:
   dependencies:
     hoek "2.x.x"
 
-sonus@^0.1.9-4:
-  version "0.1.9-4"
-  resolved "https://registry.yarnpkg.com/sonus/-/sonus-0.1.9-4.tgz#7a9ab7c9b09bec6a0a0f85302e252619043cdf56"
+sonus@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/sonus/-/sonus-0.1.9.tgz#1d4a3944ad5fea6511f828109bf594414fff1c1a"
   dependencies:
     "@google-cloud/speech" "^0.10.3"
     node-record-lpcm16 "^0.3.0"
