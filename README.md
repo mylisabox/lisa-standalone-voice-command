@@ -6,7 +6,10 @@ Module to listen hotword, translate the user sentence and send the result to a L
 `npm i lisa-standalone-voice-command` 
 
 # Usage
+###As it is:
+Clone the repository and launch `node matrix.js`, don't forget to configure the speech under `config` folder
 
+###From another project:
 ```
 const LISA = require('lisa-standalone-voice-command')
 
