@@ -27,3 +27,4 @@ lisa.on('final-result', sentence => console.log(sentence + ' detected'))
 lisa.on('bot-result', result => console.log('bot-result', result))
 
 //lisa.trigger(1)
+

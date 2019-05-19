@@ -1,8 +1,8 @@
 'use strict'
 
 const Sonus = require('sonus')
-const mdns = require('mdns')
 const LISAWebservice = require('./lib/lisa-webservice')
+const LisaDiscovery = require('lisa-discovery')
 const MatrixLed = require('./lib/matrix-led')
 const speaker = require('./lib/speaker')
 const EventEmitter = require('events')
@@ -56,7 +56,8 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       return
     }
 
-    const speech = require('@google-cloud/speech')({
+    const gspeech = require('@google-cloud/speech')
+    const speech = new gspeech.SpeechClient({
       keyFilename: config.gSpeech
     })
 
@@ -76,6 +77,14 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     this.init()
 
+    this.discovery = new LisaDiscovery({
+      multicastAddress: '239.6.6.6',
+      multicastPort: 5544,
+      trigger: 'lisa-voice-search',
+      callback: () => this.identifier,
+    })
+
+    /*
     const name = 'lisaVoiceCommand ' + this.identifier
     const txt_record = {
       name: name,
@@ -87,6 +96,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       txtRecord: txt_record
     })
     this.mdnsService.start()
+     */
     if (config.autoStart) {
       this.start()
     }
@@ -143,6 +153,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     if (this.matrix) {
       this.matrix.start()
     }
+    this.discovery.start()
   }
 
   stop() {
@@ -151,6 +162,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       this.matrix.stop()
       this.setMatrixColor({})
     }
+    this.discovery.stop()
   }
 
   pause() {

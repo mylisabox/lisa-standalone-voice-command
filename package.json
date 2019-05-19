@@ -1,6 +1,6 @@
 {
   "name": "lisa-standalone-voice-command",
-  "version": "0.0.21",
+  "version": "1.0.0",
   "description": "Module to listen hotword, translate the user sentence and send the result to a L.I.S.A. instance",
   "main": "index.js",
   "repository": {
@@ -10,16 +10,17 @@
   "author": "jimmy.aumard@gmail.com",
   "license": "GPL-3.0",
   "dependencies": {
-    "matrix-protos": "^0.0.17",
-    "mdns": "^2.3.4",
+    "lisa-speaker-polly": "^1.0.3",
+    "lisa-discovery": "^1.0.0",
+    "matrix-protos": "^0.0.27",
     "pico-speaker": "^0.0.7",
-    "request": "^2.83.0",
-    "request-promise-native": "^1.0.5",
-    "sonus": "^0.1.9",
-    "uuid": "^3.1.0",
-    "zmq": "^2.15.3"
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "sonus": "^1.0.1",
+    "uuid": "^3.3.2",
+    "zeromq": "^5.1.0"
   },
   "devDependencies": {
-    "mocha": "^3.5.0"
+    "mocha": "^6.1.4"
   }
 }
