@@ -20,7 +20,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         warn: console.log
       },
       matrix: false,
-      url: 'http://mylisabox:3000',
+      url: null,
       speaker: speaker,
       gSpeech: './speech/LISA-gfile.json',
       options: {
@@ -73,7 +73,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     }, config.options)
 
     this.sonus = Sonus.init(sonusOptions, speech)
-    this.lisa = new LISAWebservice(this.identifier, config.url)
+
 
     this.init()
 
@@ -81,35 +81,41 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       multicastAddress: '239.6.6.6',
       multicastPort: 5544,
       trigger: 'lisa-voice-search',
-      callback: () => this.identifier,
+      callback: () => 'lisa-voice-response ' + this.identifier,
     })
 
-    /*
-    const name = 'lisaVoiceCommand ' + this.identifier
-    const txt_record = {
-      name: name,
-      identifier: this.identifier
-    };
-
-    this.mdnsService = mdns.createAdvertisement(mdns.tcp('http'), 9876, {
-      name: name,
-      txtRecord: txt_record
+    const scope = this
+    const trigger = 'lisa-server-response'
+    const serverDiscovery = new LisaDiscovery({
+      multicastAddress: '239.9.9.9',
+      multicastPort: 5544,
+      trigger: trigger,
+      callback: (input, address) => {
+        const data = input.replace(trigger, '').trim()
+        const json = JSON.parse(data);
+        scope.lisa = new LISAWebservice(scope.identifier, config.url || `${json.isSecure ? 'https' : 'http'}://${address}:${json.port}`)
+        console.log('found server at ' + scope.lisa.baseUrl)
+        if (config.autoStart) {
+          this.start()
+        }
+        serverDiscovery.stop()
+      }
     })
-    this.mdnsService.start()
-     */
-    if (config.autoStart) {
-      this.start()
-    }
+
+    serverDiscovery.start(() => {
+      serverDiscovery.sendMessage('lisa-server-search')
+    })
+
   }
 
   init() {
     if (this.matrix) {
       this.matrixStateMode = this.matrix.stateMode || {
         mode: MatrixLed.MODE.GRADIENT,
-        listening: { g: 150 },
-        error: { r: 150 },
-        pause: { b: 150 },
-        unknown: { g: 150, r: 150 }
+        listening: {g: 150},
+        error: {r: 150},
+        pause: {b: 150},
+        unknown: {g: 150, r: 150}
       }
       this.matrix = new MatrixLed(this.matrix)
     }

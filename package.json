@@ -11,7 +11,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "lisa-speaker-polly": "^1.0.3",
-    "lisa-discovery": "^1.0.0",
+    "lisa-discovery": "^1.0.1",
     "matrix-protos": "^0.0.27",
     "pico-speaker": "^0.0.7",
     "request": "^2.88.0",
