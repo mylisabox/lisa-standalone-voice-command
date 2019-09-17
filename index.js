@@ -69,11 +69,11 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     const language = config.language
 
     const sonusOptions = Object.assign({
-      hotwords, language
+      hotwords, language,
+      recordProgram: process.platform === 'darwin' ? 'rec' : 'arecord'
     }, config.options)
 
     this.sonus = Sonus.init(sonusOptions, speech)
-
 
     this.init()
 
@@ -84,27 +84,36 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       callback: () => 'lisa-voice-response ' + this.identifier,
     })
 
-    const scope = this
-    const trigger = 'lisa-server-response'
-    const serverDiscovery = new LisaDiscovery({
-      multicastAddress: '239.9.9.9',
-      multicastPort: 5544,
-      trigger: trigger,
-      callback: (input, address) => {
-        const data = input.replace(trigger, '').trim()
-        const json = JSON.parse(data);
-        scope.lisa = new LISAWebservice(scope.identifier, config.url || `${json.isSecure ? 'https' : 'http'}://${address}:${json.port}`)
-        console.log('found server at ' + scope.lisa.baseUrl)
-        if (config.autoStart) {
-          this.start()
+    if (config.url === null) {
+      const scope = this
+      const trigger = 'lisa-server-response'
+      const serverDiscovery = new LisaDiscovery({
+        multicastAddress: '239.9.9.9',
+        multicastPort: 5544,
+        trigger: trigger,
+        callback: (input, address) => {
+          const data = input.replace(trigger, '').trim()
+          const json = JSON.parse(data);
+          scope.lisa = new LISAWebservice(scope.identifier, `${json.isSecure ? 'https' : 'http'}://${address}:${json.port}`)
+          console.log('found server at ' + scope.lisa.baseUrl)
+          if (config.autoStart) {
+            this.start()
+          }
+          serverDiscovery.stop()
         }
-        serverDiscovery.stop()
-      }
-    })
+      })
 
-    serverDiscovery.start(() => {
-      serverDiscovery.sendMessage('lisa-server-search')
-    })
+      serverDiscovery.start(() => {
+        serverDiscovery.sendMessage('lisa-server-search')
+      })
+    }
+    else {
+      this.lisa = new LISAWebservice(this.identifier, config.url)
+      console.log('set server at ' + this.lisa.baseUrl)
+      if (config.autoStart) {
+        this.start()
+      }
+    }
 
   }
 
