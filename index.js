@@ -40,7 +40,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       this.identifier = fs.readFileSync(file)
     }
     else {
-      this.identifier = uuid()
+      this.identifier = uuid.v4()
       fs.writeFileSync(file, this.identifier);
     }
 
