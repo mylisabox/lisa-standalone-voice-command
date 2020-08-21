@@ -3,20 +3,20 @@ const LISA = require('../index')
 const language = 'fr-FR'
 
 const lisa = new LISA({
-  /*
+
   matrix: {
-    ip: '192.168.1.26',
+    ip: '192.168.1.41',
     idleMode: {
       brightness: 0.2
     }
-  },*///or false to disable the support (false by default)
+  },//or false to disable the support (false by default)
   //url: 'http://localhost:3000',
-  speaker: {
+  speaker: false,/*{
     module: require('lisa-speaker-polly'),
     options: {
       voiceId: language === 'fr-FR' ? 'Celine' : 'Kimberly'
     }
-  },
+  },*/
   language: language,
   gSpeech: './speech/LISA-gfile.json',
   hotwords: [{ file: './speech/hey_lisa.pmdl', hotword: 'hey lisa' }]
