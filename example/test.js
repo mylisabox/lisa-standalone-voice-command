@@ -4,7 +4,7 @@ const language = 'fr-FR'
 
 const lisa = new LISA({
   matrix: {
-    ip: '192.168.1.47',
+    ip: '192.168.1.62',
     //nbLeds: 18,
     idleMode: {
       brightness: 0.2
