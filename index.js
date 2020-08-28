@@ -1,6 +1,7 @@
 'use strict'
 
 const Sonus = require('sonus')
+const os = require('os')
 const LISAWebservice = require('./lib/lisa-webservice')
 const LisaDiscovery = require('lisa-discovery')
 const MatrixLed = require('./lib/matrix-led')
@@ -52,8 +53,19 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.speaker.init(speakerConfig)
       }
     }
+    this.matrix = config.matrix
+    this.matrixStateMode = {}
 
     if (!fs.existsSync(config.gSpeech)) {
+      this.matrixStateMode = {
+        mode: MatrixLed.MODE.PULSE,
+        listening: {g: 150},
+        error: {r: 150},
+        pause: {b: 150},
+        unknown: {g: 150, r: 150}
+      }
+      this.matrix = new MatrixLed(this.matrix)
+      this.setMatrixColor(this.matrixStateMode.pause)
       config.log.warn(config.gSpeech + ' doesn\'t exist, speech recognition is disabled')
       return
     }
@@ -64,8 +76,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     })
 
     this.isListening = false
-    this.matrix = config.matrix
-    this.matrixStateMode = {}
+    this.isConnected = false
 
     const hotwords = config.hotwords
     const language = config.language
@@ -116,10 +127,52 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.start()
       }
     }
-
+    this.monitorLocalNetwork(!config.autoStart)
   }
 
-  init() {
+  monitorLocalNetwork(shouldRestart) {
+    const networks = os.networkInterfaces();
+    let hasLocalNetwork = false
+    for(let networkName in networks) {
+      const networkAddresses = networks[networkName]
+      for (let networkAddressIndex in networkAddresses) {
+        let networkAddress = networkAddresses[networkAddressIndex]
+        if (!networkAddress.internal && networkAddress.mac !== '00:00:00:00:00:00') {
+          hasLocalNetwork = true
+          break;
+        }
+      }
+      if (hasLocalNetwork) {
+        break;
+      }
+    }
+
+    if (!this.isConnected && hasLocalNetwork && shouldRestart) {
+      //we're connected to local network
+      this.initMatrix()
+      this.start()
+    }
+
+    this.isConnected = hasLocalNetwork
+
+    if (!hasLocalNetwork) {
+      this.matrixStateMode = {
+        mode: MatrixLed.MODE.PULSE,
+        listening: {g: 150},
+        error: {r: 150},
+        pause: {b: 150},
+        unknown: {g: 150, r: 150}
+      }
+      this.matrix = new MatrixLed(this.matrix)
+      this.setMatrixColor(this.matrixStateMode.unknown)
+    }
+
+    setTimeout(() => {
+      this.monitorLocalNetwork(true)
+    }, this.isConnected ? 10000 : 1000)
+  }
+
+  initMatrix() {
     if (this.matrix) {
       this.matrixStateMode = this.matrix.stateMode || {
         mode: MatrixLed.MODE.GRADIENT,
@@ -130,6 +183,10 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       }
       this.matrix = new MatrixLed(this.matrix)
     }
+  }
+
+  init() {
+    this.initMatrix()
 
     this.sonus.on('hotword', (index, keyword) => {
       this.isListening = true
@@ -152,7 +209,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       this.lastAction = result.action
     })
 
-    function exitHandler(exit) {
+    const exitHandler = (exit) => {
       this.stop()
       if (exit) process.exit()
     }
