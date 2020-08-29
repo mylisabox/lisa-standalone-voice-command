@@ -39,13 +39,12 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     const file = './identifier'
     if (fs.existsSync(file)) {
       this.identifier = fs.readFileSync(file)
-    }
-    else {
+    } else {
       this.identifier = uuid.v4()
       fs.writeFileSync(file, this.identifier);
     }
 
-    if(config.speaker) {
+    if (config.speaker) {
       this.speaker = config.speaker.module ? config.speaker.module : config.speaker
       if (this.speaker) {
         const speakerConfig = config.speaker.options || {}
@@ -57,16 +56,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.matrixStateMode = {}
 
     if (!fs.existsSync(config.gSpeech)) {
-      this.matrixStateMode = {
-        mode: MatrixLed.MODE.PULSE,
-        listening: {g: 150},
-        error: {r: 150},
-        pause: {b: 150},
-        unknown: {g: 150, r: 150}
-      }
-      this.matrix = new MatrixLed(this.matrix)
-      this.setMatrixColor(this.matrixStateMode.pause)
       config.log.warn(config.gSpeech + ' doesn\'t exist, speech recognition is disabled')
+      this._setNoConfigMode()
+      this._monitorLocalNetwork(!config.autoStart, true)
       return
     }
 
@@ -76,6 +68,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     })
 
     this.isListening = false
+    this.isDetroyed = false
     this.isConnected = false
 
     const hotwords = config.hotwords
@@ -119,21 +112,32 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       serverDiscovery.start(() => {
         serverDiscovery.sendMessage('lisa-server-search')
       })
-    }
-    else {
+    } else {
       this.lisa = new LISAWebservice(this.identifier, config.url)
       console.log('set server at ' + this.lisa.baseUrl)
       if (config.autoStart) {
         this.start()
       }
     }
-    this.monitorLocalNetwork(!config.autoStart)
+    this._monitorLocalNetwork(!config.autoStart)
   }
 
-  monitorLocalNetwork(shouldRestart) {
+  _setNoConfigMode() {
+    this.matrixStateMode = {
+      mode: MatrixLed.MODE.PULSE,
+      listening: {g: 150},
+      error: {r: 150},
+      pause: {b: 150},
+      unknown: {g: 150, r: 150}
+    }
+    this.matrix = new MatrixLed(this.matrix)
+    this.setMatrixColor(this.matrixStateMode.pause)
+  }
+
+  _monitorLocalNetwork(shouldRestart, noConfigMode) {
     const networks = os.networkInterfaces();
     let hasLocalNetwork = false
-    for(let networkName in networks) {
+    for (let networkName in networks) {
       const networkAddresses = networks[networkName]
       for (let networkAddressIndex in networkAddresses) {
         let networkAddress = networkAddresses[networkAddressIndex]
@@ -149,8 +153,12 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     if (!this.isConnected && hasLocalNetwork && shouldRestart) {
       //we're connected to local network
-      this.initMatrix()
-      this.start()
+      if (noConfigMode) {
+        this._setNoConfigMode()
+      } else {
+        this.initMatrix()
+        this.start()
+      }
     }
 
     this.isConnected = hasLocalNetwork
@@ -168,7 +176,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     }
 
     setTimeout(() => {
-      this.monitorLocalNetwork(true)
+      if (!this.isDetroyed) {
+        this._monitorLocalNetwork(true, noConfigMode)
+      }
     }, this.isConnected ? 10000 : 1000)
   }
 
@@ -261,8 +271,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         setTimeout(() => this.trigger(1), 500)
       }
       return Promise.resolve()
-    }
-    else
+    } else
       return this.speaker.speak(text, disabledCache)
         .then(() => {
           if (continueSpeech) {
@@ -283,8 +292,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         .then(result => {
           if (result.action === 'UNKNOWN' && this.matrix) {
             this.setMatrixColor(this.matrixStateMode.unknown, true)
-          }
-          else {
+          } else {
             if (this.matrix) {
               this.matrix.idle()
             }
@@ -294,8 +302,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         .catch(error => {
           this._emitError(error)
         })
-    }
-    else {
+    } else {
       if (this.matrix) {
         this.matrix.idle()
       }
@@ -323,5 +330,10 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.matrix.idle()
       }
     }, time)
+  }
+
+  destroy() {
+    this.isDetroyed = true;
+    this.stop()
   }
 }
