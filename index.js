@@ -52,8 +52,11 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.speaker.init(speakerConfig)
       }
     }
-    this.matrix = config.matrix
+    this.matrixConfig = config.matrix
+    this.matrix = null
     this.matrixStateMode = {}
+
+    this.initMatrix()
 
     if (!fs.existsSync(config.gSpeech)) {
       config.log.warn(config.gSpeech + ' doesn\'t exist, speech recognition is disabled')
@@ -123,14 +126,8 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
   }
 
   _setNoConfigMode() {
-    this.matrixStateMode = {
-      mode: MatrixLed.MODE.PULSE,
-      listening: {g: 150},
-      error: {r: 150},
-      pause: {b: 150},
-      unknown: {g: 150, r: 150}
-    }
-    this.matrix = new MatrixLed(this.matrix)
+    //pause mean no config file
+    this.matrixStateMode.mode = MatrixLed.MODE.PULSE
     this.setMatrixColor(this.matrixStateMode.pause)
   }
 
@@ -164,16 +161,10 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.isConnected = hasLocalNetwork
 
     if (!hasLocalNetwork) {
-      this.matrixStateMode = {
-        mode: MatrixLed.MODE.PULSE,
-        listening: {g: 150},
-        error: {r: 150},
-        pause: {b: 150},
-        unknown: {g: 150, r: 150}
-      }
-      this.matrix = new MatrixLed(this.matrix)
+      this.matrixStateMode.mode = MatrixLed.MODE.PULSE
       this.setMatrixColor(this.matrixStateMode.unknown)
     }
+    this.isConnected = hasLocalNetwork
 
     setTimeout(() => {
       if (!this.isDetroyed) {
@@ -183,21 +174,19 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
   }
 
   initMatrix() {
-    if (this.matrix) {
-      this.matrixStateMode = this.matrix.stateMode || {
+    if (this.matrixConfig) {
+      this.matrixStateMode = this.matrixConfig.stateMode || {
         mode: MatrixLed.MODE.GRADIENT,
         listening: {g: 150},
         error: {r: 150},
         pause: {b: 150},
         unknown: {g: 150, r: 150}
       }
-      this.matrix = new MatrixLed(this.matrix)
+      this.matrix = new MatrixLed(this.matrixConfig)
     }
   }
 
   init() {
-    this.initMatrix()
-
     this.sonus.on('hotword', (index, keyword) => {
       this.isListening = true
       this.setMatrixColor(this.matrixStateMode.listening)
