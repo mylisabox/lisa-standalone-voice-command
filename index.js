@@ -72,6 +72,14 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       return
     }
 
+    const configFileData = fs.readFileSync(config.gSpeech)
+    if (configFileData.indexOf('"client_email"') === -1 || configFileData.indexOf('"private_key"') === -1) {
+      config.log.warn(config.gSpeech + ' doesn\'t have required data, it\'s not a correct Google config file')
+      this._setNoConfigMode()
+      this._monitorLocalNetwork(!config.autoStart, true)
+      return
+    }
+
     const gspeech = require('@google-cloud/speech')
     const speech = new gspeech.SpeechClient({
       keyFilename: config.gSpeech
