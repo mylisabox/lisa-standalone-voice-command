@@ -58,6 +58,13 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
 
     this.initMatrix()
 
+    this.discovery = new LisaDiscovery({
+      multicastAddress: '239.6.6.6',
+      multicastPort: 5544,
+      trigger: 'lisa-voice-search',
+      callback: () => 'lisa-voice-response ' + this.identifier,
+    })
+
     if (!fs.existsSync(config.gSpeech)) {
       config.log.warn(config.gSpeech + ' doesn\'t exist, speech recognition is disabled')
       this._setNoConfigMode()
@@ -85,13 +92,6 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     this.sonus = Sonus.init(sonusOptions, speech)
 
     this.init()
-
-    this.discovery = new LisaDiscovery({
-      multicastAddress: '239.6.6.6',
-      multicastPort: 5544,
-      trigger: 'lisa-voice-search',
-      callback: () => 'lisa-voice-response ' + this.identifier,
-    })
 
     if (config.url === null) {
       const scope = this
