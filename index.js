@@ -166,8 +166,6 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       }
     }
 
-    this.isConnected = hasLocalNetwork
-
     if (!hasLocalNetwork) {
       this.matrixStateMode.mode = MatrixLed.MODE.PULSE
       this.setMatrixColor(this.matrixStateMode.unknown)
@@ -189,6 +187,9 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         error: {r: 150},
         pause: {b: 150},
         unknown: {g: 150, r: 150}
+      }
+      if (this.matrix) {
+        this.matrix.stop();
       }
       this.matrix = new MatrixLed(this.matrixConfig)
     }

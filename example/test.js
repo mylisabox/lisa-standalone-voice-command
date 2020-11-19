@@ -4,10 +4,10 @@ const language = 'fr-FR'
 
 const lisa = new LISA({
   matrix: {
-    ip: '192.168.1.44',
+    ip: '192.168.1.41',
     //nbLeds: 18,
     idleMode: {
-      brightness: 0.2
+      brightness: 0.02
     }
   },//or false to disable the support (false by default)
   //url: 'http://localhost:3000',

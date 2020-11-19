@@ -1,6 +1,6 @@
 {
   "name": "lisa-standalone-voice-command",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Module to listen hotword, translate the user sentence and send the result to a L.I.S.A. instance",
   "main": "index.js",
   "repository": {
