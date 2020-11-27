@@ -160,7 +160,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       //we're connected to local network
       if (noConfigMode) {
         this._setNoConfigMode()
-      } else {
+      } else if (!this.initialized) {
         this.initMatrix()
         this.start()
       }
@@ -192,6 +192,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
         this.matrix.stop();
       }
       this.matrix = new MatrixLed(this.matrixConfig)
+      this.initialized = true;
     }
   }
 
