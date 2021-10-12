@@ -1,16 +1,15 @@
-'use strict'
+import {SpeechClient} from '@google-cloud/speech';
+import EventEmitter from 'events'
+import fs from 'fs';
+import LisaDiscovery from 'lisa-discovery';
+import os from 'os';
+import Sonus from 'sonus';
+import {v4} from 'uuid';
+import LISAWebservice from './lib/lisa-webservice.js';
+import MatrixLed from './lib/matrix-led.js';
+import speaker from './lib/speaker.js';
 
-const Sonus = require('sonus')
-const os = require('os')
-const LISAWebservice = require('./lib/lisa-webservice')
-const LisaDiscovery = require('lisa-discovery')
-const MatrixLed = require('./lib/matrix-led')
-const speaker = require('./lib/speaker')
-const EventEmitter = require('events')
-const uuid = require('uuid')
-const fs = require('fs')
-
-module.exports = class LISAVoiceCommand extends EventEmitter {
+export default class LISAVoiceCommand extends EventEmitter {
   constructor(config = {}) {
     super()
     config = Object.assign({
@@ -40,7 +39,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
     if (fs.existsSync(file)) {
       this.identifier = fs.readFileSync(file)
     } else {
-      this.identifier = uuid.v4()
+      this.identifier = v4()
       fs.writeFileSync(file, this.identifier);
     }
 
@@ -80,8 +79,7 @@ module.exports = class LISAVoiceCommand extends EventEmitter {
       return
     }
 
-    const gspeech = require('@google-cloud/speech')
-    const speech = new gspeech.SpeechClient({
+    const speech = new SpeechClient({
       keyFilename: config.gSpeech
     })
 

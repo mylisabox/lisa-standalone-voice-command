@@ -1,4 +1,4 @@
-const LISA = require('../index')
+import LISA from '../index.js';
 
 const language = 'fr-FR'
 
