@@ -287,14 +287,14 @@ export default class LISAVoiceCommand extends EventEmitter {
     if (sentence !== '') {
       this.lisa.sendVoice(sentence)
         .then(result => {
-          if (result.action === 'UNKNOWN' && this.matrix) {
+          if (result.data.action === 'UNKNOWN' && this.matrix) {
             this.setMatrixColor(this.matrixStateMode.unknown, true)
           } else {
             if (this.matrix) {
               this.matrix.idle()
             }
           }
-          this.emit('bot-result', result)
+          this.emit('bot-result', result.data)
         })
         .catch(error => {
           this._emitError(error)
