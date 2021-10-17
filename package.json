@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "lisa-standalone-voice-command",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Module to listen hotword, translate the user sentence and send the result to a L.I.S.A. instance",
   "main": "index.js",
   "repository": {
@@ -16,6 +16,7 @@
     "matrix-protos": "^0.1.1",
     "sonus": "^1.0.3",
     "uuid": "^8.3.2",
+    "axios": "^0.23.0",
     "zeromq": "^5.2.8"
   },
   "devDependencies": {
