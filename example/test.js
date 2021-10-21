@@ -4,7 +4,7 @@ const language = 'fr-FR'
 
 const lisa = new LISA({
   matrix: {
-    ip: '192.168.1.41',
+    ip: '192.168.1.45',
     //nbLeds: 18,
     idleMode: {
       brightness: 0.02
@@ -27,5 +27,13 @@ lisa.on('error', error => console.log('error', error))
 lisa.on('final-result', sentence => console.log(sentence + ' detected'))
 lisa.on('bot-result', result => console.log('bot-result', result))
 
-//lisa.trigger(1)
+setTimeout(() => {
+  //lisa.trigger(1)
+}, 30000000);
+
+
+process.on('uncaughtException', function(err) {
+  console.log('Caught exception: ' + err);
+  console.log(err.stack);
+});
 

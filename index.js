@@ -260,6 +260,14 @@ export default class LISAVoiceCommand extends EventEmitter {
 
   trigger(index, hotword) {
     Sonus.trigger(this.sonus, index, hotword)
+    if (this.triggerTimeout) {
+      clearTimeout(this.triggerTimeout);
+      this.triggerTimeout = null;
+    }
+    this.triggerTimeout = setTimeout(() => {
+      this.triggerTimeout = null;
+      this.matrix.idle()
+    }, 10000);
   }
 
   speak(text, disabledCache = false, continueSpeech = true) {
