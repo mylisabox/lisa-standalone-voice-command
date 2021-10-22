@@ -199,6 +199,7 @@ export default class LISAVoiceCommand extends EventEmitter {
       this.isListening = true
       this.setMatrixColor(this.matrixStateMode.listening)
       this.emit('hotword', index, keyword)
+      this._planReset(15000)
     })
     this.sonus.on('error', error => {
       this.isListening = false
@@ -260,6 +261,10 @@ export default class LISAVoiceCommand extends EventEmitter {
 
   trigger(index, hotword) {
     Sonus.trigger(this.sonus, index, hotword)
+    this._planReset();
+  }
+
+  _planReset(time) {
     if (this.triggerTimeout) {
       clearTimeout(this.triggerTimeout);
       this.triggerTimeout = null;
@@ -267,7 +272,7 @@ export default class LISAVoiceCommand extends EventEmitter {
     this.triggerTimeout = setTimeout(() => {
       this.triggerTimeout = null;
       this.matrix.idle()
-    }, 10000);
+    }, time || 10000);
   }
 
   speak(text, disabledCache = false, continueSpeech = true) {
