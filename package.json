@@ -11,12 +11,14 @@
   "author": "jimmy.aumard@gmail.com",
   "license": "GPL-3.0",
   "dependencies": {
-    "@google-cloud/speech": "^4.9.0",
+    "@google-cloud/speech": "^4.10.2",
+    "axios": "^0.27.2",
     "lisa-discovery": "^1.1.1",
     "matrix-protos": "^0.1.1",
+    "node-record-lpcm16": "^1.0.1",
     "sonus": "^1.0.3",
     "uuid": "^8.3.2",
-    "axios": "^0.23.0",
+    "vosk": "^0.3.39",
     "zeromq": "^5.2.8"
   },
   "devDependencies": {

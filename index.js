@@ -25,7 +25,8 @@ export default class LISAVoiceCommand extends EventEmitter {
       gSpeech: './speech/LISA-gfile.json',
       options: {
         encoding: 'LINEAR16',
-        sampleRateHertz: 44100
+        device: null,
+        sampleRateHertz: 16000
       },
       autoStart: true,
       language: 'en-US',
@@ -34,7 +35,6 @@ export default class LISAVoiceCommand extends EventEmitter {
         hotword: 'hey lisa'
       }]
     }, config)
-
     const file = './identifier'
     if (fs.existsSync(file)) {
       this.identifier = fs.readFileSync(file)
